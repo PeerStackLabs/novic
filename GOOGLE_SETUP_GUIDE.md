@@ -1,6 +1,6 @@
 # Google Form & Sheets Configuration Guide
 
-This guide will help you set up the Google Form and Google Sheets integration for the KMEC Donation Platform.
+This guide will help you set up the Google Form and Google Sheets integration for the Novic Foundation Platform.
 
 ## Part 1: Google Cloud Console Setup
 
@@ -8,7 +8,7 @@ This guide will help you set up the Google Form and Google Sheets integration fo
 1. Go to https://console.cloud.google.com/
 2. Click "Select a project" dropdown at the top
 3. Click "New Project"
-4. Project name: `KMEC Donation Platform`
+4. Project name: `Novic Foundation Platform`
 5. Click "Create"
 6. Wait for project creation (10-15 seconds)
 
@@ -24,7 +24,7 @@ This guide will help you set up the Google Form and Google Sheets integration fo
 1. Go to "APIs & Services" → "Credentials"
 2. Click "Create Credentials" → "Service Account"
 3. Service account details:
-   - **Name:** `kmec-sheets-reader`
+   - **Name:** `novic-sheets-reader`
    - **Service account ID:** (auto-filled)
    - **Description:** `Read-only access to donation verification sheet`
 4. Click "Create and Continue"
@@ -48,7 +48,7 @@ Open the downloaded JSON file and find these values:
 
 ```json
 {
-  "client_email": "kmec-sheets-reader@your-project.iam.gserviceaccount.com",
+  "client_email": "novic-sheets-reader@your-project.iam.gserviceaccount.com",
   "private_key": "-----BEGIN PRIVATE KEY-----\nYour long private key...\n-----END PRIVATE KEY-----\n"
 }
 ```
@@ -60,7 +60,7 @@ Copy these values - you'll use them in your `.env` file.
 ### Step 1: Create Google Sheet
 1. Go to https://sheets.google.com/
 2. Click "+ Blank" to create new sheet
-3. Name it: `KMEC Donation Tracker`
+3. Name it: `Novic Donation Tracker`
 
 ### Step 2: Set Up Column Headers
 In the first row (Row 1), add these headers:
@@ -78,7 +78,7 @@ In the first row (Row 1), add these headers:
 ### Step 4: Share Sheet with Service Account
 1. Click the "Share" button (top right)
 2. In "Add people and groups" field, paste your service account email:
-   - Example: `kmec-sheets-reader@your-project.iam.gserviceaccount.com`
+   - Example: `novic-sheets-reader@your-project.iam.gserviceaccount.com`
 3. Set permission to **Viewer** (READ-ONLY)
 4. **UNCHECK** "Notify people" (no need to send email)
 5. Click "Share" or "Send"
@@ -101,7 +101,7 @@ Copy this ID - you'll use it in your `.env` file.
 ### Step 1: Create Google Form
 1. Go to https://forms.google.com/
 2. Click "+ Blank" to create new form
-3. Title: `KMEC Donation Payment Verification`
+3. Title: `Novic Donation Payment Verification`
 4. Description: `Please confirm your donation payment details`
 
 ### Step 2: Add Form Questions
@@ -143,7 +143,7 @@ Copy this ID - you'll use it in your `.env` file.
 1. Go to "Responses" tab in the form
 2. Click the green Sheets icon (Create Spreadsheet)
 3. Select "Select existing spreadsheet"
-4. Choose your `KMEC Donation Tracker` sheet
+4. Choose your `Novic Donation Tracker` sheet
 5. Click "Select"
 
 **Important:** This will add a new sheet tab named "Form Responses 1" in your spreadsheet. The backend verification will read from "Sheet1", so you need to:
@@ -185,7 +185,7 @@ https://docs.google.com/forms/d/e/1FAIpQLSe_AbCdEfGhIjKlMnOpQrStUvWxYz/viewform?
 ### Update `.env` file:
 ```env
 GOOGLE_SHEET_ID=1a2B3c4D5e6F7g8H9i0J1k2L3m4N5o6P7q8R9s0T1u2V
-GOOGLE_SERVICE_ACCOUNT_EMAIL=kmec-sheets-reader@your-project.iam.gserviceaccount.com
+GOOGLE_SERVICE_ACCOUNT_EMAIL=novic-sheets-reader@your-project.iam.gserviceaccount.com
 GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour private key here (keep all the \\n newlines)\n-----END PRIVATE KEY-----\n"
 ```
 

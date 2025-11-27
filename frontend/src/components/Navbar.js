@@ -17,7 +17,7 @@ const Navbar = () => {
     <nav style={styles.nav}>
       <div style={styles.container}>
         <Link to="/" style={styles.brand}>
-          <h2 style={styles.brandText}>KMEC</h2>
+          <h2 style={styles.brandText}>Novic</h2>
         </Link>
         
         <div style={styles.menu}>

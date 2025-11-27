@@ -33,7 +33,7 @@ app.use('/api/donations', donationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'KMEC Donation API is running' });
+  res.json({ status: 'OK', message: 'Novic Foundation API is running' });
 });
 
 // Error handling middleware

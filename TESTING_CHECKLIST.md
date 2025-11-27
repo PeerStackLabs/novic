@@ -1,4 +1,4 @@
-# KMEC Donation Platform - Testing Checklist
+# Novic Foundation Platform - Testing Checklist
 
 ## Pre-Testing Setup Verification
 
@@ -50,7 +50,7 @@ curl http://localhost:5000/api/health
 
 **Expected Response:**
 ```json
-{"status":"OK","message":"KMEC Donation API is running"}
+{"status":"OK","message":"Novic Foundation API is running"}
 ```
 
 - [ ] Health check passes
@@ -195,7 +195,7 @@ npm start
 **Expected Output:**
 ```
 Compiled successfully!
-You can now view kmec-donation-frontend in the browser.
+You can now view novic-foundation-frontend in the browser.
 Local: http://localhost:3000
 ```
 
@@ -205,7 +205,7 @@ Browser should open automatically.
 - [ ] Page loads at http://localhost:3000
 
 ### Test 2.1: Navigation
-- [ ] Navbar shows "KMEC" logo
+- [ ] Navbar shows "Novic" logo
 - [ ] Shows "Login" and "Sign Up" buttons when logged out
 - [ ] "/" redirects to "/donate" (then to login if not authenticated)
 
@@ -248,7 +248,7 @@ Browser should open automatically.
 Check donate page content:
 - [ ] Hero section shows "Give Movement. Give Independence."
 - [ ] Shows donation form
-- [ ] Shows "About KMEC" section
+- [ ] Shows "About Novic" section
 - [ ] Shows team names
 - [ ] Amount input field works
 - [ ] Button says "Proceed to Payment"

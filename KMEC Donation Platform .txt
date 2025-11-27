@@ -1,4 +1,4 @@
-KMEC Donation Platform – Give Movement. Give Independence.
+Novic Foundation Platform – Give Movement. Give Independence.
 
 [HERO SECTION]
 TITLE: Give Movement. Give Independence.
@@ -7,8 +7,8 @@ CTA BUTTON TEXT: Donate Now
 
 [Image/Video Placeholder]
 
-[ABOUT KMEC]
-KMEC is a non-profit organization dedicated to building affordable high-tech prosthetic limbs powered by intelligent embedded chips to help economically challenged disabled individuals regain natural motion, dignity, and independence.
+[ABOUT NOVIC]
+Novic Foundation is a non-profit organization dedicated to building affordable high-tech prosthetic limbs powered by intelligent embedded chips to help economically challenged disabled individuals regain natural motion, dignity, and independence.
 
 [Image/Video Placeholder]
 

@@ -1,13 +1,13 @@
 {
-  "name": "kmec-donation-backend",
+  "name": "novic-foundation-backend",
   "version": "1.0.0",
-  "description": "Backend for KMEC Donation Platform",
+  "description": "Backend for Novic Foundation Platform",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": ["donation", "mern", "kmec"],
+  "keywords": ["donation", "mern", "novic"],
   "author": "",
   "license": "MIT",
   "dependencies": {

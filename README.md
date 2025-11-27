@@ -1,8 +1,8 @@
-# KMEC Donation Platform
+# Novic Foundation Platform
 
 **Give Movement. Give Independence.**
 
-A full-stack MERN donation platform for KMEC - providing AI-powered prosthetics with intelligent motion chips for poor disabled individuals.
+A full-stack MERN donation platform for Novic Foundation - providing AI-powered prosthetics with intelligent motion chips for poor disabled individuals.
 
 ## Features
 
@@ -100,7 +100,7 @@ novic/
 
 ```bash
 # Navigate to project folder
-cd c:\Users\sarva\Desktop\nf\code\novic
+cd novic
 
 # Install backend dependencies
 cd backend
@@ -128,7 +128,7 @@ net start MongoDB
 
 #### Step 1: Create Google Cloud Project
 1. Go to https://console.cloud.google.com/
-2. Create a new project (e.g., "KMEC Donations")
+2. Create a new project (e.g., "Novic Donations")
 3. Enable **Google Sheets API**:
    - Go to "APIs & Services" > "Enable APIs and Services"
    - Search "Google Sheets API"
@@ -137,7 +137,7 @@ net start MongoDB
 #### Step 2: Create Service Account
 1. Go to "APIs & Services" > "Credentials"
 2. Click "Create Credentials" > "Service Account"
-3. Name it (e.g., "kmec-sheets-reader")
+3. Name it (e.g., "novic-sheets-reader")
 4. Grant role: "Viewer" (READ-ONLY access)
 5. Click "Done"
 
@@ -153,7 +153,7 @@ net start MongoDB
 
 #### Step 4: Create Google Sheet
 1. Create a new Google Sheet
-2. Name it "KMEC Donations Tracker"
+2. Name it "Novic Donations Tracker"
 3. Add headers in first row:
    ```
    A1: Email
@@ -172,7 +172,7 @@ net start MongoDB
 
 #### Step 5: Create Google Form
 1. Go to https://forms.google.com/
-2. Create new form: "KMEC Donation Payment"
+2. Create new form: "Novic Donation Payment"
 3. Add questions:
    - **Email** (Short answer, required)
    - **Amount** (Short answer, required)
@@ -189,7 +189,7 @@ Create `backend/.env` file:
 
 ```env
 # MongoDB Connection
-MONGODB_URI=mongodb://localhost:27017/kmec-donation
+MONGODB_URI=mongodb://localhost:27017/novic-donation
 
 # JWT Secret (Change this!)
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_make_it_long_and_random
@@ -398,7 +398,7 @@ jwt.sign({ userId }, process.env.JWT_SECRET, {
 
 ## Mission
 
-KMEC is dedicated to building affordable high-tech prosthetic limbs powered by intelligent embedded chips to help economically challenged disabled individuals regain natural motion, dignity, and independence.
+Novic Foundation is dedicated to building affordable high-tech prosthetic limbs powered by intelligent embedded chips to help economically challenged disabled individuals regain natural motion, dignity, and independence.
 
 **100% of donations directly fund:**
 - Movement chip R&D
