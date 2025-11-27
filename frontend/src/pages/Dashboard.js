@@ -37,6 +37,9 @@ const Dashboard = () => {
     if (status === 'PAID') {
       return <span style={styles.badgePaid}>✅ Payment Received</span>;
     }
+    if (status === 'NOT_RECEIVED') {
+      return <span style={styles.badgeNotReceived}>❌ Payment Not Received</span>;
+    }
     return <span style={styles.badgePending}>⏳ Payment Pending</span>;
   };
 
@@ -229,6 +232,14 @@ const styles = {
   },
   badgePending: {
     backgroundColor: '#f39c12',
+    color: 'white',
+    padding: '0.4rem 0.8rem',
+    borderRadius: '4px',
+    fontSize: '0.85rem',
+    fontWeight: '500',
+  },
+  badgeNotReceived: {
+    backgroundColor: '#e74c3c',
     color: 'white',
     padding: '0.4rem 0.8rem',
     borderRadius: '4px',

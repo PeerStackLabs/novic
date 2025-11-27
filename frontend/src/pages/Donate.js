@@ -29,8 +29,9 @@ const Donate = () => {
       const donationEmail = response.data.donation.email;
       
       // Redirect to Google Form with pre-filled data
-      // Replace YOUR_FORM_ID and entry IDs with your actual Google Form details
-      const formUrl = `https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.EMAIL_FIELD=${encodeURIComponent(donationEmail)}&entry.AMOUNT_FIELD=${amount}`;
+      // TODO: Replace entry.XXXXXXXXX with actual entry IDs from your Google Form
+      // To find entry IDs: Right-click on form fields → Inspect → Look for name="entry.XXXXXXXXX"
+      const formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSfu0krfVFOXgRaBns1rh1qP3VYP3cgJyeNHHQsNFCkB1Glhpw/viewform?usp=pp_url&entry.EMAIL_ENTRY_ID=${encodeURIComponent(donationEmail)}&entry.AMOUNT_ENTRY_ID=${amount}`;
       
       // Open Google Form in new tab
       window.open(formUrl, '_blank');

@@ -19,10 +19,18 @@ const donationSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ['PENDING', 'PAID'],
+    enum: ['PENDING', 'PAID', 'NOT_RECEIVED'],
     default: 'PENDING',
   },
   verifiedAt: {
+    type: Date,
+    default: null,
+  },
+  verificationAttempts: {
+    type: Number,
+    default: 0,
+  },
+  verificationExpiresAt: {
     type: Date,
     default: null,
   },
