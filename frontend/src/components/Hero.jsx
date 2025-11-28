@@ -71,7 +71,7 @@ const Hero = () => {
               {/* Placeholder for Hero Image */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-forest/80 z-10"></div>
               <img 
-                src="https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=800&auto=format&fit=crop" 
+                src="/images/Prosthetic Program.jpg" 
                 alt="Prosthetic limb recipient running" 
                 className="w-full h-full object-cover"
               />
