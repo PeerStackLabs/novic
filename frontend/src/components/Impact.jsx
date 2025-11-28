@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, useReducedMotion, useInView } from 'framer-motion';
 import { fadeUp, staggerContainer } from '../framerConfig';
-import useStats from '../hooks/useStats';
 
 const CountUp = ({ end, duration = 2, suffix = '' }) => {
   const [count, setCount] = useState(0);
@@ -47,15 +46,14 @@ const CountUp = ({ end, duration = 2, suffix = '' }) => {
  * Impact component displaying key statistics.
  */
 const Impact = () => {
-  const { stats, loading } = useStats();
   const shouldReduceMotion = useReducedMotion();
   const containerVariants = shouldReduceMotion ? {} : staggerContainer;
   const itemVariants = shouldReduceMotion ? {} : fadeUp;
 
-  // Parse numbers for animation (remove non-numeric chars for counting)
-  const limbsFundedNum = parseInt(stats.limbsFunded.toString().replace(/\D/g, '')) || 2800;
-  const mobilityNum = parseInt(stats.regainMobilityPercent.toString().replace(/\D/g, '')) || 93;
-  const centersNum = parseInt(stats.partnerCenters) || 27;
+  // Static stats data
+  const limbsFundedNum = 2800;
+  const mobilityNum = 93;
+  const centersNum = 27;
 
   return (
     <section aria-labelledby="impact-heading" className="py-16 md:py-24 bg-forest text-cream">
@@ -79,11 +77,7 @@ const Impact = () => {
           {/* Card 1 */}
           <motion.div variants={itemVariants} className="bg-cardbg p-8 rounded-2xl text-center border border-white/10">
             <div className="text-4xl md:text-5xl font-serif font-bold text-mint mb-2" role="status" aria-live="polite">
-              {loading ? (
-                <span>...</span>
-              ) : (
-                <CountUp end={limbsFundedNum} suffix="+" />
-              )}
+              <CountUp end={limbsFundedNum} suffix="+" />
             </div>
             <div className="text-xs uppercase tracking-widest text-cream/60 mb-4 font-bold">Limbs funded</div>
             <p className="text-sm text-cream/70 leading-relaxed">
@@ -94,11 +88,7 @@ const Impact = () => {
           {/* Card 2 */}
           <motion.div variants={itemVariants} className="bg-cardbg p-8 rounded-2xl text-center border border-white/10">
             <div className="text-4xl md:text-5xl font-serif font-bold text-mint mb-2" role="status" aria-live="polite">
-              {loading ? (
-                <span>...</span>
-              ) : (
-                <CountUp end={mobilityNum} suffix="%" />
-              )}
+              <CountUp end={mobilityNum} suffix="%" />
             </div>
             <div className="text-xs uppercase tracking-widest text-cream/60 mb-4 font-bold">Regain functional mobility</div>
             <p className="text-sm text-cream/70 leading-relaxed">
@@ -109,11 +99,7 @@ const Impact = () => {
           {/* Card 3 */}
           <motion.div variants={itemVariants} className="bg-cardbg p-8 rounded-2xl text-center border border-white/10">
             <div className="text-4xl md:text-5xl font-serif font-bold text-mint mb-2" role="status" aria-live="polite">
-              {loading ? (
-                <span>...</span>
-              ) : (
-                <CountUp end={centersNum} />
-              )}
+              <CountUp end={centersNum} />
             </div>
             <div className="text-xs uppercase tracking-widest text-cream/60 mb-4 font-bold">Partner centers</div>
             <p className="text-sm text-cream/70 leading-relaxed">

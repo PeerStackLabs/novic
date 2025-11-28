@@ -74,8 +74,10 @@ const Profile = () => {
     <div className="container mx-auto px-6 py-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
         <div>
-          <h1 className="text-4xl font-serif text-forest mb-2">Your Donations</h1>
-          {user && <p className="text-gray-600">Welcome back, {user.name}</p>}
+          <h1 className="text-4xl font-serif text-forest mb-2">
+            Welcome, {user?.name || localStorage.getItem('userName') || 'User'}
+          </h1>
+          {user && <p className="text-gray-600">{user.email}</p>}
         </div>
         <button 
           onClick={() => navigate('/donate')} 
@@ -90,6 +92,8 @@ const Profile = () => {
           {error}
         </div>
       )}
+
+      <h2 className="text-2xl font-serif text-forest mb-6">Your Donations</h2>
 
       {donations.length === 0 ? (
         <div className="bg-white p-12 rounded-3xl text-center shadow-sm border border-gray-100">
@@ -128,15 +132,6 @@ const Profile = () => {
                   </div>
                 )}
               </div>
-
-              {donation.paymentStatus === 'PENDING' && (
-                <div className="px-6 py-4 bg-yellow-50 border-t border-yellow-100">
-                  <p className="text-xs text-yellow-800 flex items-start gap-2">
-                    <span>⚠️</span>
-                    Complete payment in Google Form to verify this donation
-                  </p>
-                </div>
-              )}
             </div>
           ))}
         </div>

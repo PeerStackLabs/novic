@@ -1,0 +1,314 @@
++-----------------------------------------------------------------------------+
+|                               CLIENT SIDE                                   |
+|                           (Browser / Frontend)                              |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|   +---------------------------------------------------------------------+   |
+|   |                           React App (Vite)                          |   |
+|   |                                                                     |   |
+|   |  [Pages]          [Components]           [Hooks]                    |   |
+|   |  - Home           - Navbar               - useAuth                  |   |
+|   |  - Donate         - DonationCard         - useProjects              |   |
+|   |  - Profile        - ModalDonate          - useStats                 |   |
+|   |                                                                     |   |
+|   |  [Styling & UI]                          [API Layer]                |   |
+|   |  - Tailwind CSS                          - Axios Client             |   |
+|   |  - Framer Motion                         - Interceptors (JWT)       |   |
+|   +-----------------------------------+---------------------------------+   |
+|                                       |                                     |
++---------------------------------------|-------------------------------------+
+                                        | HTTP / JSON
+                                        | (REST API)
+                                        v
++-----------------------------------------------------------------------------+
+|                               SERVER SIDE                                   |
+|                             (Node.js / Backend)                             |
++-----------------------------------------------------------------------------+
+|                                                                             |
+|   +---------------------------------------------------------------------+   |
+|   |                          Express Server                             |   |
+|   |                                                                     |   |
+|   |  [Middleware]     [Controllers]          [Routes]                   |   |
+|   |  - CORS           - AuthController       - /api/auth                |   |
+|   |  - Auth (JWT)     - DonationController   - /api/donations           |   |
+|   |                                                                     |   |
+|   |  [Services & Jobs]                                                  |   |
+|   |  - DonationVerifier                                                 |   |
+|   |  - Cron Job (node-cron) ------------------------+                   |   |
+|   +------------------+------------------------------|-------------------+   |
+|                      |                              |                       |
+|    (Mongoose ODM)    |                              | (googleapis)          |
+|          |           |                              |                       |
+|          v           v                              v                       |
++-----------------------------+        +-----------------------------+        |
+|        DATABASE             |        |      EXTERNAL SERVICES      |        |
+|                             |        |                             |        |
+|      MongoDB Atlas          |        |      Google Sheets API      |        |
+|                             |        |                             |        |
+|   [Collections]             |        |   [Spreadsheets]            |        |
+|   - Users                   |        |   - Donation Logs           |        |
+|   - Donations               |        |   - Verifications           |        |
++-----------------------------+        +-----------------------------+        |
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class
+
+
++---------------------------------------------------------+
+|                        User                             |
+|                     (Mongoose Model)                    |
++---------------------------------------------------------+
+| - _id: ObjectId                                         |
+| - name: String                                          |
+| - email: String                                         |
+| - password: String (Hashed)                             |
+| - createdAt: Date                                       |
++---------------------------------------------------------+
+| + save(): Promise<User>                                 |
+| + comparePassword(candidatePassword): Promise<Boolean>  |
++---------------------------------------------------------+
+        ^
+        | 1
+        |
+        | *
++---------------------------------------------------------+
+|                      Donation                           |
+|                   (Mongoose Model)                      |
++---------------------------------------------------------+
+| - _id: ObjectId                                         |
+| - userId: ObjectId (Ref: User)                          |
+| - email: String                                         |
+| - amount: Number                                        |
+| - paymentStatus: Enum {PENDING, PAID, NOT_RECEIVED}     |
+| - verifiedAt: Date                                      |
+| - verificationAttempts: Number                          |
+| - verificationExpiresAt: Date                           |
+| - createdAt: Date                                       |
++---------------------------------------------------------+
+| + save(): Promise<Donation>                             |
+| + find(query): Promise<Donation[]>                      |
++---------------------------------------------------------+
+
+        ^                       ^
+        | uses                  | uses
+        |                       |
++-----------------------+   +-----------------------------+
+|    AuthController     |   |     DonationController      |
++-----------------------+   +-----------------------------+
+|                       |   | - verificationIntervals: Map|
+| + signup(req, res)    |   +-----------------------------+
+| + login(req, res)     |   | + createDonation(req, res)  |
+| + getMe(req, res)     |   | + getAllDonations(req, res) |
++-----------------------+   | + getDonationById(req, res) |
+                            | - startVerification(id)     |
+                            +-----------------------------+
+                                        |
+                                        | uses
+                                        v
+                            +-----------------------------+
+                            |      DonationVerifier       |
+                            |         (Service)           |
+                            +-----------------------------+
+                            | + verifySingleDonation(id)  |
+                            | + fetchSheetData()          |
+                            +-----------------------------+
+                                        |
+                                        | connects to
+                                        v
+                            +-----------------------------+
+                            |      GoogleSheetsAPI        |
+                            |     (External Library)      |
+                            +-----------------------------+
+                            | + spreadsheets.values.get() |
+                            +-----------------------------+
+
+
+
+
+
+activity
+
+
+
+
++-------------+                 +-------------------------+                 +-------------------------+
+|    USER     |                 |      SYSTEM (App)       |                 |    EXTERNAL (Google)    |
++-------------+                 +-------------------------+                 +-------------------------+
+      |                                      |                                           |
+      O (Start)                              |                                           |
+      |                                      |                                           |
+      v                                      |                                           |
+[Login / Signup] ------------------------->  |                                           |
+      |                                      v                                           |
+      |                             [Authenticate User]                                  |
+      |                                      |                                           |
+      | <----------------------------------- |                                           |
+      v                                      |                                           |
+[Enter Amount &]                             |                                           |
+[Click "Donate"] ------------------------->  |                                           |
+      |                                      v                                           |
+      |                             [Create Donation Record]                             |
+      |                             [   Status: PENDING    ]                             |
+      |                                      |                                           |
+      | <----------------------------------- |                                           |
+      v                                      |                                           |
+[Redirect to Form] ------------------------------------------------------------------->  |
+      |                                      |                                           v
+      |                                      |                                  [Display Payment Form]
+      v                                      |                                           |
+[Fill Payment Info]                          |                                           |
+[   & Submit      ] ------------------------------------------------------------------>  |
+      |                                      |                                           v
+      |                                      |                                  [Save to Google Sheet]
+      |                                      |                                           |
+      |                                      v                                           |
+      |                             [Start Verification Job] <---------------------------|
+      |                             [    (Poll Sheet)      ]
+      |                                      |
+      |                                      v
+      |                             < Match Found? >
+      |                             /              \
+      |                           No                Yes
+      |                           |                  |
+      |                           v                  v
+      |                   [Wait / Retry]      [Update Status]
+      |                   [ or Timeout ]      [   to PAID   ]
+      |                           |                  |
+      v                           |                  |
+[View Dashboard] <----------------+------------------+
+[ Check Status ]
+      |
+      v
+      O (End)
+
+
+
+
+
+
+
+sequence
+
+
+User                Frontend              Backend               Database             Google Form           Google Sheet
+ |                     |                     |                     |                     |                     |
+ | 1. Login            |                     |                     |                     |                     |
+ |-------------------->|                     |                     |                     |                     |
+ |                     | 2. POST /login      |                     |                     |                     |
+ |                     |-------------------->|                     |                     |                     |
+ |                     |                     | 3. Validate User    |                     |                     |
+ |                     |                     |-------------------->|                     |                     |
+ |                     | 4. Return Token     |                     |                     |                     |
+ |                     |<--------------------|                     |                     |                     |
+ |                     |                     |                     |                     |                     |
+ | 5. Enter Amount &   |                     |                     |                     |                     |
+ |    Click Donate     |                     |                     |                     |                     |
+ |-------------------->|                     |                     |                     |                     |
+ |                     | 6. POST /donations  |                     |                     |                     |
+ |                     |-------------------->|                     |                     |                     |
+ |                     |                     | 7. Create PENDING   |                     |                     |
+ |                     |                     |    Donation         |                     |                     |
+ |                     |                     |-------------------->|                     |                     |
+ |                     | 8. Return DonID     |                     |                     |                     |
+ |                     |<--------------------|                     |                     |                     |
+ |                     |                     |                     |                     |                     |
+ | 9. Redirect to Form |                     |                     |                     |                     |
+ |    (w/ pre-filled)  |                     |                     |                     |                     |
+ |-------------------------------------------------------------------------------------->|                     |
+ |                     |                     |                     |                     |                     |
+ | 10. Submit Payment  |                     |                     |                     |                     |
+ |     Details         |                     |                     |                     |                     |
+ |-------------------------------------------------------------------------------------->|                     |
+ |                     |                     |                     |                     | 11. Save Row        |
+ |                     |                     |                     |                     |-------------------->|
+ |                     |                     |                     |                     |                     |
+ |                     |                     | 12. Poll (Cron Job) |                     |                     |
+ |                     |                     |---------------------------------------------------------------->|
+ |                     |                     |                     |                     |                     |
+ |                     |                     | 13. Fetch Rows      |                     |                     |
+ |                     |                     |<----------------------------------------------------------------|
+ |                     |                     |                     |                     |                     |
+ |                     |                     | 14. Match Logic     |                     |                     |
+ |                     |                     |     (Email+Amt)     |                     |                     |
+ |                     |                     |-------------------->|                     |                     |
+ |                     |                     |                     |                     |                     |
+ |                     |                     | 15. Update Status   |                     |                     |
+ |                     |                     |     to PAID         |                     |                     |
+ |                     |                     |-------------------->|                     |                     |
+ |                     |                     |                     |                     |                     |
+ | 16. View Dashboard  |                     |                     |                     |                     |
+ |-------------------->|                     |                     |                     |                     |
+ |                     | 17. GET /donations  |                     |                     |                     |
+ |                     |-------------------->|                     |                     |                     |
+ |                     |                     | 18. Return List     |                     |                     |
+ |                     |                     |     (Status: PAID)  |                     |                     |
+ |                     |<--------------------|                     |                     |                     |
+ | 19. Show Success    |                     |                     |                     |                     |
+ |<--------------------|                     |                     |                     |                     |
+ |                     |                     |                     |                     |                     |
+
+
+
+
+
+
+use case
+
+
+                       NOVIC FOUNDATION PLATFORM
+                   +--------------------------------------------------+
+                   |                                                  |
+                   |   ( Sign Up )                                    |
+      +-----+      |       ^                                          |
+      |     |      |       |                                          |
+      |     |      |   ( Log In ) <-----------------------+           |
+      |     |      |                                      |           |
+      |Donor|--+---|   ( View Dashboard )                 |           |
+      |     |  |   |                                      |           |
+      +-----+  |   |   ( Create Donation Pledge ) . . . . |           |
+         |     |   |            |               <<include>>           |
+         |     +---|            |                                     |
+         |         |            | (redirects)                         |
+         |         |            v                                     |
+         |         |   ( Fill Payment Form ) -------------------------+----->  +----------+
+         |         |                                                  |        |  Google  |
+         +------------------------------------------------------------+----->  | Services |
+                   |                                                  |        | (Forms/  |
+                   |                                                  |        |  Sheets) |
+                   |   ( Fetch Sheet Data ) <-------------------------+----->  +----------+
+                   |            ^                                     |
+                   |            | <<include>>                         |
+                   |            |                                     |
+                   |   ( Verify Transactions )                        |
+                   |            |                                     |
+                   |            | (updates)                           |
+                   |            v                                     |
+                   |   ( Update Donation Status )                     |
+                   |                                                  |
+                   +--------------------+-----------------------------+
+                                        |
+                                        |
+                                     +-----+
+                                     |     |
+                                     |System|
+                                     |(Cron)|
+                                     +-----+
+
+
+
