@@ -4,7 +4,7 @@ const User = require('../models/User');
 // Generate JWT Token
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: '7d', // Token expires in 7 days
+    expiresIn: '1d', // Token expires in 1 day
   });
 };
 
@@ -20,8 +20,12 @@ const signup = async (req, res) => {
       return res.status(400).json({ error: 'Please provide all required fields' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    // Password validation: at least 8 characters, alphanumeric + at least 1 special character
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        error: 'Password must be at least 8 characters and contain letters, numbers, and at least one special character (@$!%*#?&)' 
+      });
     }
 
     // Check if user already exists
