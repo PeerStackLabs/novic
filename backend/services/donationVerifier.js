@@ -59,22 +59,60 @@ const verifyDonations = async () => {
     // Skip header row
     const paymentData = rows.slice(1);
 
+    // Track used sheet rows to prevent duplicate matching
+    const usedSheetRows = new Set();
+
     let verifiedCount = 0;
 
     // Check each pending donation
     for (const donation of pendingDonations) {
       // Find matching entry in Google Sheet
       // Column A = Timestamp, Column B = donation amount, Column C = email
-      const matchingRow = paymentData.find(row => {
+      const matchingRowIndex = paymentData.findIndex((row, index) => {
+        // Skip already used rows
+        if (usedSheetRows.has(index)) return false;
+
+        const sheetTimestamp = row[0]; // Column A - Google Form timestamp
+        const sheetAmount = parseFloat(row[1]); // Column B
         const sheetEmail = row[2]?.trim().toLowerCase(); // Column C
 
-        // Match by email only (accept any amount paid)
-        return sheetEmail === donation.email.toLowerCase();
+        // Parse sheet timestamp - handle DD/MM/YYYY HH:mm:ss format
+        let sheetDate;
+        try {
+          // Convert DD/MM/YYYY HH:mm:ss to YYYY-MM-DD HH:mm:ss for parsing
+          const parts = sheetTimestamp.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+          if (parts) {
+            const [_, day, month, year, hour, minute, second] = parts;
+            sheetDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+          } else {
+            sheetDate = new Date(sheetTimestamp);
+          }
+        } catch (e) {
+          console.error(`⚠ Failed to parse timestamp: ${sheetTimestamp}`);
+          return false;
+        }
+        
+        // Match by email AND timestamp should be after donation creation
+        // Accept ANY amount paid (no amount validation)
+        const emailMatches = sheetEmail === donation.email.toLowerCase();
+        const timestampValid = !isNaN(sheetDate.getTime()) && sheetDate >= donation.createdAt;
+
+        // Debug logging
+        if (emailMatches && timestampValid) {
+          console.log(`🔍 Matching: Donation ₹${donation.amount} (created: ${donation.createdAt.toISOString()})`);
+          console.log(`   Sheet: ₹${sheetAmount} at ${sheetDate.toISOString()}`);
+        }
+
+        return emailMatches && timestampValid;
       });
 
-      if (matchingRow) {
+      if (matchingRowIndex !== -1) {
+        const matchingRow = paymentData[matchingRowIndex];
         const sheetAmount = parseFloat(matchingRow[1]); // Column B - actual paid amount
         const originalAmount = donation.amount;
+        
+        // Mark this sheet row as used
+        usedSheetRows.add(matchingRowIndex);
         
         // Update donation to PAID with actual amount
         donation.paymentStatus = 'PAID';
@@ -135,10 +173,32 @@ const verifySingleDonation = async (donationId) => {
     // Find matching entry in Google Sheet
     // Column A = Timestamp, Column B = donation amount, Column C = email
     const matchingRow = paymentData.find(row => {
+      const sheetTimestamp = row[0]; // Column A - Google Form timestamp
+      const sheetAmount = parseFloat(row[1]); // Column B
       const sheetEmail = row[2]?.trim().toLowerCase(); // Column C
 
-      // Match by email only (accept any amount paid)
-      return sheetEmail === donation.email.toLowerCase();
+      // Parse sheet timestamp - handle DD/MM/YYYY HH:mm:ss format
+      let sheetDate;
+      try {
+        // Convert DD/MM/YYYY HH:mm:ss to YYYY-MM-DD HH:mm:ss for parsing
+        const parts = sheetTimestamp.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})/);
+        if (parts) {
+          const [_, day, month, year, hour, minute, second] = parts;
+          sheetDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
+        } else {
+          sheetDate = new Date(sheetTimestamp);
+        }
+      } catch (e) {
+        console.error(`⚠ Failed to parse timestamp: ${sheetTimestamp}`);
+        return false;
+      }
+      
+      // Match by email AND timestamp should be after donation creation
+      // Accept ANY amount paid (no amount validation)
+      const emailMatches = sheetEmail === donation.email.toLowerCase();
+      const timestampValid = !isNaN(sheetDate.getTime()) && sheetDate >= donation.createdAt;
+
+      return emailMatches && timestampValid;
     });
 
     if (matchingRow) {

@@ -1,13 +1,30 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NAV_LINKS } from '../constants';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const token = localStorage.getItem('token');
+  const userName = localStorage.getItem('userName');
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    navigate('/');
+    setIsOpen(false);
+  };
 
   return (
     <header className="fixed w-full top-0 z-50 bg-forest/95 backdrop-blur-sm text-cream border-b border-white/10">
@@ -35,18 +52,38 @@ const Header = () => {
           >
             Donate Now
           </Link>
-          <Link
-            to="/login"
-            className="text-sm font-medium text-cream/80 hover:text-white transition-colors"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="text-sm font-medium text-cream/80 hover:text-white transition-colors border border-cream/20 px-4 py-2 rounded-full hover:border-cream/50"
-          >
-            Sign Up
-          </Link>
+          {token ? (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/profile')}
+                className="w-10 h-10 rounded-full bg-mint text-forest font-bold flex items-center justify-center hover:bg-mint-dark transition-all transform hover:scale-105 shadow-lg"
+                title={`Profile - ${userName}`}
+              >
+                {getInitials(userName)}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="text-sm font-medium text-cream/80 hover:text-white transition-colors border border-cream/20 px-4 py-2 rounded-full hover:border-red-400 hover:text-red-400"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-medium text-cream/80 hover:text-white transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="text-sm font-medium text-cream/80 hover:text-white transition-colors border border-cream/20 px-4 py-2 rounded-full hover:border-cream/50"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -106,20 +143,45 @@ const Header = () => {
               >
                 Donate Now
               </Link>
-              <Link
-                to="/login"
-                className="text-center text-cream/80 hover:text-white"
-                onClick={() => setIsOpen(false)}
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="text-center text-cream/80 hover:text-white border border-cream/20 px-4 py-2 rounded-full"
-                onClick={() => setIsOpen(false)}
-              >
-                Sign Up
-              </Link>
+              {token ? (
+                <>
+                  <button
+                    onClick={() => {
+                      navigate('/profile');
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center gap-3 text-cream hover:text-mint"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-mint text-forest font-bold flex items-center justify-center">
+                      {getInitials(userName)}
+                    </div>
+                    <span>View Profile</span>
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="text-center text-cream/80 hover:text-red-400 border border-cream/20 px-4 py-2 rounded-full hover:border-red-400"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="text-center text-cream/80 hover:text-white"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="text-center text-cream/80 hover:text-white border border-cream/20 px-4 py-2 rounded-full"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </nav>
           </motion.div>
         )}

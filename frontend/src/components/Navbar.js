@@ -25,7 +25,7 @@ const Navbar = () => {
             <>
               <span style={styles.greeting}>Welcome, {userName}</span>
               <Link to="/donate" style={styles.link}>Donate</Link>
-              <Link to="/dashboard" style={styles.link}>Dashboard</Link>
+              <Link to="/profile" style={styles.link}>Profile</Link>
               <button onClick={handleLogout} style={styles.logoutBtn}>
                 Logout
               </button>

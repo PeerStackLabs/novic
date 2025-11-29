@@ -19,6 +19,14 @@ const Donate = () => {
       return;
     }
 
+    // Check if user is logged in for donations above 10000
+    const token = localStorage.getItem('token');
+    if (parseFloat(amount) > 10000 && !token) {
+      alert('Please login to make donations above ₹10,000');
+      navigate('/login');
+      return;
+    }
+
     setLoading(true);
 
     try {
