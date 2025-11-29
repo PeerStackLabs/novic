@@ -1,9 +1,23 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { fadeUp, staggerContainer, parallaxImage } from '../framerConfig';
 
 const Hero = () => {
+  const videoRef = useRef(null);
+  const isVideoInView = useInView(videoRef, { amount: 0.3 });
+
+  useEffect(() => {
+    if (videoRef.current) {
+      if (isVideoInView) {
+        videoRef.current.currentTime = 0;
+        videoRef.current.play().catch(e => console.log("Autoplay prevented", e));
+      } else {
+        videoRef.current.pause();
+      }
+    }
+  }, [isVideoInView]);
+
   return (
     <section className="relative bg-forest min-h-screen flex items-center pt-20 overflow-hidden">
       <div className="container mx-auto px-6 relative z-10">
@@ -70,9 +84,11 @@ const Hero = () => {
             <motion.div variants={parallaxImage} className="relative rounded-3xl overflow-hidden shadow-2xl shadow-black/30 aspect-[4/5] md:aspect-square lg:aspect-[4/5]">
               {/* Placeholder for Hero Image */}
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-forest/80 z-10"></div>
-              <img 
-                src="/images/Prosthetic Program.jpg" 
-                alt="Prosthetic limb recipient running" 
+              <video 
+                ref={videoRef}
+                src="/images/Prosthetic Program.mp4" 
+                muted 
+                playsInline
                 className="w-full h-full object-cover"
               />
               
