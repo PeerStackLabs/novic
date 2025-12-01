@@ -93,6 +93,40 @@ const Profile = () => {
         </div>
       )}
 
+      {/* Total Contributions This Year */}
+      <div className="bg-gradient-to-br from-mint to-mint-dark p-8 rounded-3xl mb-12 shadow-lg">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div>
+            <h3 className="text-sm font-medium text-forest/70 uppercase tracking-wide mb-2">
+              Total Contributed in {new Date().getFullYear()}
+            </h3>
+            <div className="text-5xl font-serif font-bold text-forest">
+              {formatCurrency(
+                donations
+                  .filter(d => {
+                    const donationYear = new Date(d.createdAt).getFullYear();
+                    const currentYear = new Date().getFullYear();
+                    return donationYear === currentYear && d.paymentStatus === 'PAID';
+                  })
+                  .reduce((sum, d) => sum + d.amount, 0)
+              )}
+            </div>
+          </div>
+          <div className="text-center md:text-right">
+            <div className="text-2xl font-bold text-forest mb-1">
+              {donations.filter(d => {
+                const donationYear = new Date(d.createdAt).getFullYear();
+                const currentYear = new Date().getFullYear();
+                return donationYear === currentYear && d.paymentStatus === 'PAID';
+              }).length}
+            </div>
+            <div className="text-sm text-forest/70">
+              Successful Donations
+            </div>
+          </div>
+        </div>
+      </div>
+
       <h2 className="text-2xl font-serif text-forest mb-6">Your Donations</h2>
 
       {donations.length === 0 ? (
